@@ -7,6 +7,7 @@ import FormRow from "./FormRow";
 import ButtonComponent from "./ButtonComponent";
 import Spinner from "./Spinner";
 import { login } from "../services/authService";
+import NotificationActions from "../context/actions/notificationActions";
 function LoginModal() {
   const { state }: any = useContext(AppContext);
   const { loginModal } = state;
@@ -14,15 +15,20 @@ function LoginModal() {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loading, setLoading] = useState(false);
-
+  
   const handleLogin = async (e: any) => {
     e.preventDefault();
     setLoading(true);
-    await login(loginEmail, loginPassword);
-    setLoginEmail("");
-    setLoginPassword("");
-    alert("Login successfull");
-    AuthModalActions.showModal("loginModal",false);
+    let response:any = await login(loginEmail, loginPassword);
+    if(response===200){
+      setLoginEmail("");
+      setLoginPassword("");
+      NotificationActions.showNotification('Login success','normal')
+      AuthModalActions.showModal("loginModal",false);
+    }else{
+      NotificationActions.showNotification('Wrong credentials','danger')
+    }
+    
     setLoading(false);
   };
 

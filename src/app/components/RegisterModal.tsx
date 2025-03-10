@@ -6,6 +6,8 @@ import FormComponent from "./FormComponent";
 import FormRow from "./FormRow";
 import ButtonComponent from "./ButtonComponent";
 import Spinner from "./Spinner";
+import { register } from "../services/authService";
+import NotificationActions from "../context/actions/notificationActions";
 
 function RegisterModal() {
   const { state }: any = useContext(AppContext);
@@ -18,35 +20,24 @@ function RegisterModal() {
 
   const handleRegister = async (e: any) => {
     e.preventDefault();
-    setLoading(true)
-    try {
-      const response = await fetch("http://localhost:3001/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: registerEmail,
-          password: registerPassword,
-        }),
-      });
-      const data = await response.json();
-      console.log(response);
-      if (response.status === 200) {
-        setRegisterEmail("");
-        setRegisterPassword("");
-        alert("Login successfull");
-      } else alert("Wrong credentials");
-    } catch (err) {
-      alert("User not found");
-      console.log(err);
+    setLoading(true);
+    let response:any = await register(registerName, registerEmail, registerPassword);
+    if(response===200){
+      setRegisterName('')
+      setRegisterEmail("");
+      setRegisterPassword("");
+      NotificationActions.showNotification('Registered successfully','normal')
+      AuthModalActions.showModal("registerModal",false);
+      AuthModalActions.showModal("loginModal",true);
+    }else{
+      NotificationActions.showNotification(response[0],'danger')
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const closeRegisterModal = (e: any) => {
     e.stopPropagation();
-    AuthModalActions.showModal("registerModal",false);
+    AuthModalActions.showModal("registerModal", false);
   };
 
   if (registerModal)
@@ -55,26 +46,39 @@ function RegisterModal() {
         onClick={closeRegisterModal}
         className={`h-full w-full absolute top-0 left-0 flex lg:items-center justify-center backdrop-blur-sm duration-200`}
       >
-        <FormComponent submitFunction={handleRegister} title='Register' closeFunc={closeRegisterModal}>
+        <FormComponent
+          submitFunction={handleRegister}
+          title="Register"
+          closeFunc={closeRegisterModal}
+        >
           <FormRow
             labelText="Name"
             value={registerName}
-            onChangeFunction={(e:any)=>{setRegisterName(e.target.value)}}
-            type='text'
+            onChangeFunction={(e: any) => {
+              setRegisterName(e.target.value);
+            }}
+            type="text"
           />
           <FormRow
             labelText="Email"
             value={registerEmail}
-            onChangeFunction={(e:any)=>{setRegisterEmail(e.target.value)}}
-            type='email'
+            onChangeFunction={(e: any) => {
+              setRegisterEmail(e.target.value);
+            }}
+            type="email"
           />
           <FormRow
             labelText="Password"
             value={registerPassword}
-            onChangeFunction={(e:any)=>{setRegisterPassword(e.target.value)}}
-            type='password'
+            onChangeFunction={(e: any) => {
+              setRegisterPassword(e.target.value);
+            }}
+            type="password"
           />
-          <ButtonComponent text={loading?<Spinner/>:"Register"} type="background" />
+          <ButtonComponent
+            text={loading ? <Spinner /> : "Register"}
+            type="background"
+          />
         </FormComponent>
       </div>
     );

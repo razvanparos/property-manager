@@ -1,7 +1,7 @@
-import { NOTIFICATION_SHOW } from "../actions/notificationActions.ts";
-import { NOTIFICATION_HIDE } from "../actions/notificationActions.ts";
+import { NOTIFICATION_SHOW } from "../actions/notificationActions";
+import { NOTIFICATION_HIDE } from "../actions/notificationActions";
 
-const notificationReducer = (state, action) => {
+const notificationReducer = (state:any, action:any) => {
     const  notificationMessage  = action.payload.msg;
     const  notificationType  = action.payload.type;
     switch (action.type) {

@@ -1,6 +1,5 @@
 import { CircleX } from "lucide-react";
 import * as React from "react";
-import AuthModalActions from "../context/actions/authModalActions";
 
 function FormComponent({ submitFunction, title, children, closeFunc }: any) {
   return (
